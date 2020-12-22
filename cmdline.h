@@ -29,7 +29,8 @@ struct gengetopt_args_info
   char * project_arg;	/* The Project to build (.xcode, .xcodeproj).  */
   char * project_orig;	/* The Project to build (.xcode, .xcodeproj) original value given at command line.  */
   const char *project_help; /* The Project to build (.xcode, .xcodeproj) help description.  */
-  int generate_makefile_only_flag;	/* This only generates project makefiles without running make (default=off).  */
+  int generate_makefile_only_flag;  /* This only generates project makefiles without running make (default=off).  */
+  int generate_flat_directory_flag;  /* This generates flat directory - i.e. no pbxbuild subdir (default=off).  */
   const char *generate_makefile_only_help; /* This only generates project makefiles without running make help description.  */
   int debug_flag;	/* Turn on debug logging (default=off).  */
   const char *debug_help; /* Turn on debug logging help description.  */
@@ -37,7 +38,8 @@ struct gengetopt_args_info
   int help_given ;	/* Whether help was given.  */
   int version_given ;	/* Whether version was given.  */
   int project_given ;	/* Whether project was given.  */
-  int generate_makefile_only_given ;	/* Whether generate-makefile-only was given.  */
+  int generate_makefile_only_given ;  /* Whether generate-makefile-only was given.  */
+  int generate_flat_directory_given ;  /* Whether generate-makefile-only was given.  */
   int debug_given ;	/* Whether debug was given.  */
 
 } ;

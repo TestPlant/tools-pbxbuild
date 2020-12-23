@@ -178,11 +178,14 @@ main(int argc, const char *argv[], char *env[])
 	  if ([projectDirEntry hasPrefix: @"GNUmakefile"])
 	    continue;
     
+    // If not generating the pbxbuild directory...
     if (args_info.generate_flat_directory_flag == 1)
     {
       [makefileGenerator setPbxBuildDir:@"."];
     }
-    else
+    
+    // If skipping generating the symlink/copy processing...
+    if (args_info.skip_symlink_copy_flag == 0)
     {
 #ifdef __MINGW32__
       {

@@ -381,6 +381,7 @@
 {
   RELEASE(project);
   RELEASE(pbxbuildDir);
+  RELEASE(pbxscriptsDir);
   [super dealloc];
 }
 

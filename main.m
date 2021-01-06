@@ -113,7 +113,7 @@ main(int argc, const char *argv[], char *env[])
   pcGenerator       = [[PBProjectGenerator alloc] initWithProject: project];
 
   // create (overwrite) pbxbuild directory for builds
-  if (args_info.generate_flat_directory_flag)
+  if (args_info.generate_flat_directory_flag == 1)
   {
     pbxbuildDir = [fileManager currentDirectoryPath];
   }

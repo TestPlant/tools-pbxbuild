@@ -113,17 +113,24 @@ main(int argc, const char *argv[], char *env[])
   pcGenerator       = [[PBProjectGenerator alloc] initWithProject: project];
 
   // create (overwrite) pbxbuild directory for builds
-  pbxbuildDir = [[fileManager currentDirectoryPath] 
-		   stringByAppendingPathComponent: @"pbxbuild"];
+  if (args_info.generate_flat_directory_flag == 1)
+  {
+    pbxbuildDir = [fileManager currentDirectoryPath];
+  }
+  else
+  {
+    pbxbuildDir = [[fileManager currentDirectoryPath]
+         stringByAppendingPathComponent: @"pbxbuild"];
 
-  if ([fileManager fileExistsAtPath: pbxbuildDir])
-    {
-      NSLog(@"Removing old build dir...\n");
-      [fileManager removeFileAtPath: pbxbuildDir handler: nil];
-    }
+    if ([fileManager fileExistsAtPath: pbxbuildDir])
+      {
+        NSLog(@"Removing old build dir...\n");
+        [fileManager removeFileAtPath: pbxbuildDir handler: nil];
+      }
 
-  [fileManager createDirectoryAtPath: pbxbuildDir attributes: nil];
-
+    [fileManager createDirectoryAtPath: pbxbuildDir attributes: nil];
+  }
+  
   // create project makefile and PC.project file.
   projectMakefile = [makefileGenerator generateProjectMakefile];
   NSDebugLog(@"Project Makefile:\n%@\n", projectMakefile);
@@ -170,29 +177,39 @@ main(int argc, const char *argv[], char *env[])
 	  // skip existing GNUmakefiles
 	  if ([projectDirEntry hasPrefix: @"GNUmakefile"])
 	    continue;
-					       
+    
+    // If not generating the pbxbuild directory...
+    if (args_info.generate_flat_directory_flag == 1)
+    {
+      [makefileGenerator setPbxBuildDir:@"."];
+    }
+    
+    // If skipping generating the symlink/copy processing...
+    if (args_info.skip_symlink_copy_flag == 0)
+    {
 #ifdef __MINGW32__
-	  {
-	    NSString *source = 
-	      [projectDir stringByAppendingPathComponent: projectDirEntry];
-	    NSDebugLog(@"Copying from '%@' to '%@'", 
-		  source,
-		  destination);
-	    [fileManager copyPath: source
-			 toPath: destination
-			 handler: nil];
-	  }
+      {
+        NSString *source =
+          [projectDir stringByAppendingPathComponent: projectDirEntry];
+        NSDebugLog(@"Copying from '%@' to '%@'",
+        source,
+        destination);
+        [fileManager copyPath: source
+         toPath: destination
+         handler: nil];
+      }
 #else
-	  {
-	    NSString *source = 
-	      [@"../../"  stringByAppendingPathComponent: projectDirEntry];
-	    NSDebugLog(@"Creating symbolic link from '%@' to '%@'", 
-		       source,
-		       destination);
-	    [fileManager createSymbolicLinkAtPath: destination
-			 pathContent: source];
-	  }
+      {
+        NSString *source =
+          [@"../../"  stringByAppendingPathComponent: projectDirEntry];
+        NSDebugLog(@"Creating symbolic link from '%@' to '%@'",
+             source,
+             destination);
+        [fileManager createSymbolicLinkAtPath: destination
+         pathContent: source];
+      }
 #endif
+    }
 	}
 
       // generate and write makefile
@@ -238,7 +255,8 @@ main(int argc, const char *argv[], char *env[])
     }
 
   // finally changedir to the pbxbuild directory and run make
-  [fileManager changeCurrentDirectoryPath: @"pbxbuild"];
+  if (args_info.generate_flat_directory_flag == 0)
+    [fileManager changeCurrentDirectoryPath: @"pbxbuild"];
   if(isstatic)
     {
       system("make shared=no");

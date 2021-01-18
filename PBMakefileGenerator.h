@@ -32,6 +32,8 @@
 @interface PBMakefileGenerator : NSObject
 {
   PBPbxProject   *project;
+  NSString       *pbxbuildDir;
+  NSString       *pbxscriptsDir;
 }
 /**
  * designated initializer, aProject is the project which Makefile 
@@ -45,6 +47,16 @@
  * set aProject for which a makefile should be generated
  */
 - (void) setProject: (PBPbxProject *) aProject;
+
+/**
+ * set the subdirectory for the pbxbuild where the files should be generated
+ */
+- (void) setPbxBuildDir: (NSString *) directory;
+
+/**
+ * set the subdirectory for the pbxbuild scripts where the files should be generated
+ */
+- (void)setPbxScriptsDir:(NSString *)directory;
 
 /**
  * returns the name of the subproject (is used for the subproject

@@ -187,15 +187,14 @@
   NSString *script = nil;
   NSFileManager *fm = [NSFileManager defaultManager];
   NSString *currentPath = [fm currentDirectoryPath];
-  NSString *scriptsDir = [[currentPath stringByAppendingPathComponent: @"pbxbuild"]
-			   stringByAppendingPathComponent: @"scripts"];
+  NSString *scriptsDir = [[currentPath stringByAppendingPathComponent: pbxbuildDir]
+			   stringByAppendingPathComponent: pbxscriptsDir];
 
   if ([[target scripts] count] == 0)
     return;
 
   // create scripts directory...
-  [fm createDirectoryAtPath: scriptsDir 
-      attributes: nil];
+  [fm createDirectoryAtPath:scriptsDir withIntermediateDirectories:YES attributes:nil error:NULL];
   
   while ((key = [e nextObject]))
     {
@@ -371,6 +370,8 @@
 - (PBMakefileGenerator *) initWithProject: (PBPbxProject *) aProject;
 {  
   self = [super init];
+  pbxbuildDir = @"pbxbuild";
+  pbxscriptsDir = @"pbxscripts";
   [self setProject: aProject];
   return self;
 }
@@ -379,12 +380,24 @@
 - (void) dealloc
 {
   RELEASE(project);
+  RELEASE(pbxbuildDir);
+  RELEASE(pbxscriptsDir);
   [super dealloc];
 }
 
 - (void) setProject: (PBPbxProject *) aProject
 {
   ASSIGN(project, aProject);
+}
+
+- (void)setPbxBuildDir:(NSString *)directory
+{
+  ASSIGNCOPY(pbxbuildDir, directory);
+}
+
+- (void)setPbxScriptsDir:(NSString *)directory
+{
+  ASSIGNCOPY(pbxscriptsDir, directory);
 }
 
 - (NSString *) getSubprojectNameForTarget: (PBPbxNativeTarget *)target
